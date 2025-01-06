@@ -1,0 +1,14 @@
+# node_modules
+node_modules/
+
+# build output
+.next/
+
+# Dependencies lock files
+package-lock.json
+
+# TypeScript configuration
+tsconfig.json
+
+# PostCSS config
+postcss.config.mjs
