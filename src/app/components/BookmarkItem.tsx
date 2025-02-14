@@ -3,15 +3,10 @@
 import React from 'react'
 import { ChapterChoiceIcon, DateBookMask, NoneSelect, Selected } from './icons/BookmaskIcons'
 import Image from 'next/image'
+import { Book } from './interface'
 
 interface BookmarkItemProps {
-  bookmark: {
-    title: string
-    author: string
-    chapter: string
-    lastMark: string
-    imageUrl: string
-  }
+  bookmark: Book
   isEdit: boolean
   isSelected: boolean
   onSelect: () => void
@@ -24,9 +19,9 @@ function BookmarkItem({ bookmark, isEdit, isSelected, onSelect }: BookmarkItemPr
         <Image
           alt={bookmark.title}
           width={100}
-          height={150}
+          height={300}
           src={bookmark.imageUrl}
-          className='rounded-md'
+          className='rounded-md object-cover  h-[180px] w-[150px]'
         />
       </div>
       <div className='flex flex-col justify-between w-full gap-2'>

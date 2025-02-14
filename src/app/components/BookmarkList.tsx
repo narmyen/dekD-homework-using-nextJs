@@ -1,37 +1,49 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import BookmarkItem from './BookmarkItem'
 import { Delete } from './icons/BookmaskIcons'
 import mockBookmarks from './mockupdata'
+import { Book } from './interface'
+import BookmarkService from '../services/BookmarkService'
 
 function BookmarkList() {
   const [isEdit, setIsEdit] = useState<boolean>(false)
   const [isCancel, setCancel] = useState<boolean>(false)
   const [selectedItems, setSelectedItems] = useState<number[]>([]) // จัดเก็บ index ของ item ที่เลือก
-  const [bookmarks, setBookmarks] = useState(mockBookmarks) // ใช้ mockupdata เป็นค่าเริ่มต้น
+  const [bookmarks, setBookmarks] = useState<Book[]>([]) // ใช้ mockupdata เป็นค่าเริ่มต้น
 
-  // ฟังก์ชันสำหรับเลือกหรือยกเลิกการเลือก item
   const handleSelect = (index: number) => {
     if (selectedItems.includes(index)) {
-      // ถ้าเลือกไว้แล้ว ให้ยกเลิกการเลือก
       setSelectedItems(selectedItems.filter((item) => item !== index))
     } else {
-      // ถ้ายังไม่ได้เลือก ให้เพิ่มเข้าไปในลิสต์
       setSelectedItems([...selectedItems, index])
     }
   }
 
-  // ฟังก์ชันลบรายการที่เลือก
   const handleDelete = () => {
-    // ลบรายการที่เลือกออกจาก bookmarks
     const newBookmarks = bookmarks.filter((_, index) => !selectedItems.includes(index))
     setBookmarks(newBookmarks)
-    setSelectedItems([]) // รีเซ็ต selectedItems หลังจากลบ
+    setSelectedItems([])
   }
 
+  useEffect(() => {
+    const fetchData = async () => {
+      BookmarkService.fetchBookmark()
+        .then(bookmarks => {
+          setBookmarks(bookmarks)
+        })
+    }
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    console.log(bookmarks)
+  }, [bookmarks])
+
   return (
-    <div className='mt-[55px] mx-8 sm:px-[20px] md:px-[25px] lg:px-[100px]'>
+    <div className='mt-[55px] mx-8 sm:px-[20px] md:px-[25px] lg:px-[200px]'>
       <div className='border-b-[1px] border-black/40'>
         <h1 className='text-[32px]'>รายการที่คั่นไว้</h1>
       </div>
@@ -43,13 +55,13 @@ function BookmarkList() {
           <div className='flex gap-[8px]'>
             <div
               className='cursor-pointer border-2 rounded-full px-[1rem] py-[.3rem]'
-              onClick={() => { setIsEdit(false); setCancel(true); setSelectedItems([]); }} // ยกเลิกการเลือกทั้งหมด
+              onClick={() => { setIsEdit(false); setCancel(true); setSelectedItems([]); }}
             >
               <p>ยกเลิก</p>
             </div>
             <div
               className='flex gap-2 items-center cursor-pointer border-2 rounded-full px-[1rem] py-[.3rem]'
-              onClick={handleDelete} // ลบรายการที่เลือก
+              onClick={handleDelete}
             >
               <Delete />
               <p>{selectedItems.length} รายการ</p>
@@ -71,8 +83,8 @@ function BookmarkList() {
             key={index}
             bookmark={bookmark}
             isEdit={isEdit}
-            isSelected={selectedItems.includes(index)} // เช็คว่ารายการนี้ถูกเลือกหรือไม่
-            onSelect={() => handleSelect(index)} // ฟังก์ชันเลือก/ยกเลิก
+            isSelected={selectedItems.includes(index)}
+            onSelect={() => handleSelect(index)}
           />
         ))}
       </div>
